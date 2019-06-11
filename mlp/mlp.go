@@ -4,10 +4,11 @@ import (
 	gor "gorgonia.org/gorgonia"
 )
 
-// NewMLP creates the graph of a Multi Layer Perceptron
+// NewMLP creates the VM of a Multi Layer Perceptron
 // ie a basic feedforward Neural Network
-func NewMLP(layers []int) *gor.ExprGraph {
+func NewMLP(layers []int) gor.VM {
 	network := gor.NewGraph()
 
-	return network
+	machine := gor.NewTapeMachine(network)
+	return machine
 }
