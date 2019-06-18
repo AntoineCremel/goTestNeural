@@ -2,31 +2,16 @@ package main
 
 import (
 	"fmt"
-	"log"
-
-	gor "gorgonia.org/gorgonia"
+	"testNeural/mlp"
 )
 
 func main() {
-	g := gor.NewGraph()
+	mlp, err := mlp.NewMLPClassifier(4, []int{12, 3})
 
-	var x, y, z *gor.Node
-	var err error
-
-	x = gor.NewScalar(g, gor.Float64, gor.WithName("x"))
-	y = gor.NewScalar(g, gor.Float64, gor.WithName("y"))
-	z, err = gor.Add(x, y)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Error! ")
+		fmt.Println(err)
+	} else {
+		fmt.Println(mlp.String())
 	}
-
-	machine := gor.NewTapeMachine(g)
-
-	gor.Let(x, 2.0)
-	gor.Let(y, 2.5)
-	if err = machine.RunAll(); err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("%v", z.Value())
 }
