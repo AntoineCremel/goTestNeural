@@ -11,6 +11,6 @@ func TestNewMLPClassifier(t *testing.T) {
 	if err != nil {
 		t.Errorf("%s", err)
 	} else {
-		fmt.Println(mlp.String())
+		fmt.Println(mlp.graph.String())
 	}
 }

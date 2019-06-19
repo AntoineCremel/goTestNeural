@@ -6,6 +6,13 @@ import (
 	gor "gorgonia.org/gorgonia"
 )
 
+// NeuralNetwork type should probably be moved to another package or file
+type NeuralNetwork struct {
+	graph   *gor.ExprGraph
+	weights []*gor.Node
+	biases  []*gor.Node
+}
+
 // NewMLPClassifier creates the VM of a Multi Layer Perceptron
 // ie a basic feedforward Neural Network
 // - The last layer is the output layer. It should be trained and
@@ -13,7 +20,7 @@ import (
 // then we consider this to be a binary classification.
 //
 // IMPORTANT: will panick if layers contains less than one number
-func NewMLPClassifier(inputs int, layers []int) (*gor.ExprGraph, error) {
+func NewMLPClassifier(inputs int, layers []int) (*NeuralNetwork, error) {
 	// Check that layers is of the minimum size
 	if len(layers) == 0 {
 		panic("Problem in NewMLPClassifier: must give at least 1 layers")
@@ -73,5 +80,9 @@ func NewMLPClassifier(inputs int, layers []int) (*gor.ExprGraph, error) {
 	}
 
 	// machine := gor.NewTapeMachine(g)
-	return g, nil
+	return &NeuralNetwork{
+		graph:   g,
+		weights: weights,
+		biases:  biases,
+	}, nil
 }
