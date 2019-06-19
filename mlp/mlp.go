@@ -30,6 +30,7 @@ func NewMLPClassifier(inputs int, layers []int) (*gor.ExprGraph, error) {
 	// Create a slice to hold the biases
 	biases := make([]*gor.Node, len(layers))
 
+	var err error
 	for i, size := range layers {
 		// For each layer:
 		// 1 Multiply by a matrix of weights
@@ -42,7 +43,7 @@ func NewMLPClassifier(inputs int, layers []int) (*gor.ExprGraph, error) {
 		shape := gor.WithShape(sizePrevious, size)
 		name := gor.WithName(fmt.Sprintf("W%d", i))
 		weights[i] = gor.NewMatrix(g, gor.Float64, shape, name)
-		current, err := gor.Mul(weights[i], current)
+		current, err = gor.Mul(weights[i], current)
 		if err != nil {
 			return nil, err
 		}
