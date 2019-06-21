@@ -8,9 +8,11 @@ import (
 
 // NeuralNetwork type should probably be moved to another package or file
 type NeuralNetwork struct {
-	graph   *gor.ExprGraph
-	weights []*gor.Node
-	biases  []*gor.Node
+	graph       *gor.ExprGraph
+	weights     gor.Nodes
+	biases      gor.Nodes
+	weightGrads gor.Nodes
+	biasesGrads gor.Nodes
 }
 
 // NewMLPClassifier creates the VM of a Multi Layer Perceptron
@@ -33,9 +35,9 @@ func NewMLPClassifier(inputs int, layers []int) (*NeuralNetwork, error) {
 
 	// Create a slice that will hold all the matrices containing the
 	// weights for each layer
-	weights := make([]*gor.Node, len(layers))
+	weights := make(gor.Nodes, len(layers))
 	// Create a slice to hold the biases
-	biases := make([]*gor.Node, len(layers))
+	biases := make(gor.Nodes, len(layers))
 
 	var err error
 	for i, size := range layers {
