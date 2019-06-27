@@ -6,13 +6,13 @@ import (
 	gor "gorgonia.org/gorgonia"
 )
 
-// NeuralNetwork type should probably be moved to another package or file
-type NeuralNetwork struct {
-	graph       *gor.ExprGraph
-	weights     gor.Nodes
-	biases      gor.Nodes
-	weightGrads gor.Nodes
-	biasesGrads gor.Nodes
+// FeedForward type describes a simple, fully connected Neural Network
+type FeedForward struct {
+	graph   *gor.ExprGraph
+	input   *gor.Node
+	output  *gor.Node
+	weights gor.Nodes
+	biases  gor.Nodes
 }
 
 // NewMLPClassifier creates the VM of a Multi Layer Perceptron
@@ -22,7 +22,7 @@ type NeuralNetwork struct {
 // then we consider this to be a binary classification.
 //
 // IMPORTANT: will panick if layers contains less than one number
-func NewMLPClassifier(inputs int, layers []int) (*NeuralNetwork, error) {
+func NewMLPClassifier(inputs int, layers []int) (*FeedForward, error) {
 	// Check that layers is of the minimum size
 	if len(layers) == 0 {
 		panic("Problem in NewMLPClassifier: must give at least 1 layers")
@@ -32,6 +32,7 @@ func NewMLPClassifier(inputs int, layers []int) (*NeuralNetwork, error) {
 
 	// Create the input
 	current := gor.NewVector(g, gor.Float64, gor.WithShape(inputs), gor.WithName("x"))
+	input := current
 
 	// Create a slice that will hold all the matrices containing the
 	// weights for each layer
@@ -80,11 +81,21 @@ func NewMLPClassifier(inputs int, layers []int) (*NeuralNetwork, error) {
 			}
 		}
 	}
+	output := current
 
 	// machine := gor.NewTapeMachine(g)
-	return &NeuralNetwork{
+	return &FeedForward{
 		graph:   g,
+		input:   input,
+		output:  output,
 		weights: weights,
 		biases:  biases,
 	}, nil
+}
+
+// Train will take a set of input Vector Nodes and a set of expected OneHot Nodes,
+// and will train the weights and biases of the network using those data.
+func (n *FeedForward) Train(inputs, expected *gor.Nodes) {
+	// first, we add the Loss function at the end of the Network
+
 }
