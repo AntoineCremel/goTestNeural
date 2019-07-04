@@ -108,6 +108,10 @@ func NewMLPClassifier(inputs int, layers []int) (*FeedForward, error) {
 	}, nil
 }
 
+func (n *FeedForward) Graph() *gor.ExprGraph {
+	return n.graph
+}
+
 // Activate will take input, feed it to the network, and compute the
 // result of the computation.
 func (n *FeedForward) Activate(input tensor.Tensor) (int, error) {

@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"testNeural/mlp"
+	"goTestNeural/mlp"
+	"goTestNeural/util"
 )
 
 func main() {
@@ -12,6 +13,7 @@ func main() {
 		fmt.Println("Error! ")
 		fmt.Println(err)
 	} else {
-		fmt.Println(nn.graph.String())
+		fmt.Println(nn.Graph())
+		util.WriteDotToFile(nn.Graph().ToDot())
 	}
 }

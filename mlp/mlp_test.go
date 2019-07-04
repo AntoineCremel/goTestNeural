@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"gorgonia.org/tensor"
+
+	"goTestNeural/util"
 )
 
 func TestNewMLPClassifier(t *testing.T) {
@@ -18,7 +20,11 @@ func TestNewMLPClassifier(t *testing.T) {
 		t.Errorf("%s", err)
 	} else {
 		fmt.Println(mlp.graph)
-		// Print the graph to
+		// Print the graph to the target output
+		err = util.WriteDotToFile(mlp.graph.ToDot())
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 	defer mlp.Close()
 
