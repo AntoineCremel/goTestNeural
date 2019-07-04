@@ -5,7 +5,7 @@ import (
 )
 
 func WriteDotToFile(dot string) error {
-	file, err := os.Create("graph.gv")
+	file, err := os.Create("graph.dot")
 	defer file.Close()
 	if err != nil {
 		return err
