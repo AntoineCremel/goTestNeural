@@ -63,7 +63,7 @@ func NewMLPClassifier(inputs int, layers []int) (*FeedForward, error) {
 		name := gor.WithName(fmt.Sprintf("W%d", i))
 		value := gor.WithValue(random.UniformRandomTensor(0, 0.1, sizePrevious, size))
 		weights[i] = gor.NewMatrix(g, gor.Float64, shape, name, value)
-		current, err = gor.Mul(weights[i], current)
+		current, err = gor.Mul(current, weights[i])
 		if err != nil {
 			return nil, err
 		}
@@ -144,11 +144,17 @@ func (n *FeedForward) Activate(input tensor.Tensor) (int, error) {
 		axis = 2
 	} else if shape.IsColVec() {
 		axis = 1
+	} else if len(shape) == 1 {
+		axis = 1
 	} else {
 		panic("Why is this not a shape")
 	}
+	fmt.Printf("%T\n", result)
+	fmt.Println(resultTensor)
 	resultScalar, err := resultTensor.Argmax(axis)
-
+	if err != nil {
+		return 0, err
+	}
 	if !resultScalar.IsScalar() {
 		panic("At the disco")
 	}
