@@ -145,7 +145,7 @@ func (n *FeedForward) Activate(input tensor.Tensor) (int, error) {
 	} else if shape.IsColVec() {
 		axis = 1
 	} else if len(shape) == 1 {
-		axis = 1
+		axis = 0
 	} else {
 		panic("Why is this not a shape")
 	}
