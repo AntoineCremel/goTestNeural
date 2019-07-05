@@ -16,14 +16,23 @@ import (
 type FeedForward struct {
 	// The machine on which the graph runs
 	gor.VM
-
-	graph      *gor.ExprGraph
-	input      *gor.Node
-	output     *gor.Node
-	weights    gor.Nodes
-	biases     gor.Nodes
+	graph *gor.ExprGraph
+	// Node that needs to be set to the input
+	input *gor.Node
+	// Node that will contain the output
+	output *gor.Node
+	// During training, this node is used for computing the loss
+	// Needs to be set to the expected value
+	expectedOutput *gor.Node
+	loss           *gor.Node
+	// Stores all the weights of our network
+	weights gor.Nodes
+	// Stores all the biases of our Network
+	biases gor.Nodes
+	// Graident for each of the weights
 	weightGrad gor.Nodes
-	biasGrads  gor.Nodes
+	// Bias for each of the weight
+	biasGrads gor.Nodes
 }
 
 // NewMLPClassifier creates the VM of a Multi Layer Perceptron
@@ -63,8 +72,10 @@ func NewMLPClassifier(inputs int, layers []int) (*FeedForward, error) {
 		}
 		shape := gor.WithShape(sizePrevious, size)
 		name := gor.WithName(fmt.Sprintf("W%d", i))
+		// Generate uniformly random values
 		value := gor.WithValue(random.UniformRandomTensor(0, 0.1, sizePrevious, size))
 		weights[i] = gor.NewMatrix(g, gor.Float64, shape, name, value)
+
 		current, err = gor.Mul(current, weights[i])
 		if err != nil {
 			return nil, err
@@ -91,22 +102,28 @@ func NewMLPClassifier(inputs int, layers []int) (*FeedForward, error) {
 				return nil, err
 			}
 		} else {
-			current, err = gor.Sigmoid(current)
+			current, err = gor.SoftMax(current)
 			if err != nil {
 				return nil, err
 			}
 		}
 	}
 	output := current
+
+	expected := gor.NewVector(g, gor.Float64, gor.WithShape(layers[len(layers)-1]), gor.WithName("y"))
+
+	// Creation of th elogger
 	logger := log.New(os.Stdout, "", log.Flags())
 	machine := gor.NewTapeMachine(g, gor.WithLogger(logger))
+
 	return &FeedForward{
-		VM:      machine,
-		graph:   g,
-		input:   input,
-		output:  output,
-		weights: weights,
-		biases:  biases,
+		VM:             machine,
+		graph:          g,
+		input:          input,
+		output:         output,
+		expectedOutput: expected,
+		weights:        weights,
+		biases:         biases,
 	}, nil
 }
 

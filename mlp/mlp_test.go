@@ -19,14 +19,14 @@ func TestNewMLPClassifier(t *testing.T) {
 	mlp, err := NewMLPClassifier(4, []int{12, 3})
 
 	if err != nil {
-		t.Errorf("%s", err)
-	} else {
-		fmt.Println(mlp.graph)
-		// Print the graph to the target output
-		err = util.WriteDotToFile(mlp.graph.ToDot())
-		if err != nil {
-			fmt.Println(err)
-		}
+		fmt.Printf("Error with the creation of the classifer: %s", err)
+		return
+	}
+	fmt.Println(mlp.graph)
+	// Print the graph to the target output
+	err = util.WriteDotToFile(mlp.graph.ToDot())
+	if err != nil {
+		fmt.Println(err)
 	}
 	defer mlp.Close()
 
