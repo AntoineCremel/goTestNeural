@@ -91,7 +91,7 @@ func NewMLPClassifier(inputs int, layers []int) (*FeedForward, error) {
 				return nil, err
 			}
 		} else {
-			current, err = gor.SoftMax(current)
+			current, err = gor.Sigmoid(current)
 			if err != nil {
 				return nil, err
 			}
