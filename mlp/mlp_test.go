@@ -12,7 +12,9 @@ import (
 
 func TestNewMLPClassifier(t *testing.T) {
 	// Initialize the random seed
-	rand.Seed(3)
+	// For now, we will use a static seed so that our result can be deterministic
+	// Later on, we will switch to a time-based seed.
+	rand.Seed(1)
 
 	mlp, err := NewMLPClassifier(4, []int{12, 3})
 

@@ -17,11 +17,13 @@ type FeedForward struct {
 	// The machine on which the graph runs
 	gor.VM
 
-	graph   *gor.ExprGraph
-	input   *gor.Node
-	output  *gor.Node
-	weights gor.Nodes
-	biases  gor.Nodes
+	graph      *gor.ExprGraph
+	input      *gor.Node
+	output     *gor.Node
+	weights    gor.Nodes
+	biases     gor.Nodes
+	weightGrad gor.Nodes
+	biasGrads  gor.Nodes
 }
 
 // NewMLPClassifier creates the VM of a Multi Layer Perceptron
@@ -82,7 +84,7 @@ func NewMLPClassifier(inputs int, layers []int) (*FeedForward, error) {
 		}
 
 		// Apply the acitvation function
-		if i != len(layers) {
+		if i != len(layers)-1 {
 			// Use a non leaky relu for now
 			current, err = gor.LeakyRelu(current, 0.)
 			if err != nil {
@@ -108,6 +110,8 @@ func NewMLPClassifier(inputs int, layers []int) (*FeedForward, error) {
 	}, nil
 }
 
+// Graph returns unexported field Graph(), for debugging purposes.
+// Might need to be removed later
 func (n *FeedForward) Graph() *gor.ExprGraph {
 	return n.graph
 }
