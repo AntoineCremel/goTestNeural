@@ -111,6 +111,26 @@ func NewMLPClassifier(inputs int, layers []int) (*FeedForward, error) {
 	output := current
 
 	expected := gor.NewVector(g, gor.Float64, gor.WithShape(layers[len(layers)-1]), gor.WithName("y"))
+	// Generate a node for the cost part of the network
+	current, err = gor.Log(current)
+	if err != nil {
+		return nil, err
+	}
+	current, err = gor.HadamardProd(expected, current)
+	if err != nil {
+		return nil, err
+	}
+	current, err = gor.Sum(current)
+	if err != nil {
+		return nil, err
+	}
+	current, err = gor.Neg(current)
+	if err != nil {
+		return nil, err
+	}
+	loss := current
+
+	// Now that we have the loss, we can add our gradients to the graph
 
 	// Creation of th elogger
 	logger := log.New(os.Stdout, "", log.Flags())
@@ -122,6 +142,7 @@ func NewMLPClassifier(inputs int, layers []int) (*FeedForward, error) {
 		input:          input,
 		output:         output,
 		expectedOutput: expected,
+		loss:           loss,
 		weights:        weights,
 		biases:         biases,
 	}, nil
