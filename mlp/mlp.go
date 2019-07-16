@@ -30,7 +30,7 @@ type FeedForward struct {
 	// Stores all the biases of our Network
 	biases gor.Nodes
 	// Graident for each of the weights
-	weightGrad gor.Nodes
+	weightGrads gor.Nodes
 	// Bias for each of the weight
 	biasGrads gor.Nodes
 }
@@ -131,6 +131,14 @@ func NewMLPClassifier(inputs int, layers []int) (*FeedForward, error) {
 	loss := current
 
 	// Now that we have the loss, we can add our gradients to the graph
+	weightGrads, err := gor.Grad(loss, weights...)
+	if err != nil {
+		return nil, err
+	}
+	/* biasGrads, err := gor.Grad(loss, biases...)
+	if err != nil {
+		return nil, err
+	} */
 
 	// Creation of th elogger
 	logger := log.New(os.Stdout, "", log.Flags())
@@ -144,7 +152,9 @@ func NewMLPClassifier(inputs int, layers []int) (*FeedForward, error) {
 		expectedOutput: expected,
 		loss:           loss,
 		weights:        weights,
+		weightGrads:    weightGrads,
 		biases:         biases,
+		// biasGrads:      biasGrads,
 	}, nil
 }
 
@@ -164,6 +174,12 @@ func (n *FeedForward) Activate(input tensor.Tensor) (int, error) {
 
 	// Now make the input of our network equal to our own input
 	gor.Let(n.input, input)
+
+	// This function is just a pass forward, but we must bound a value
+	// to the y anyway, so we fill it with 0s
+	expectedOutputSize := n.expectedOutput.Shape()[0]
+	expectedOutput := make([]float64, expectedOutputSize)
+	gor.Let(n.expectedOutput, expectedOutput)
 
 	err := n.RunAll()
 	if err != nil {

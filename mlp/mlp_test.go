@@ -35,4 +35,5 @@ func TestNewMLPClassifier(t *testing.T) {
 	res, err := mlp.Activate(test)
 	fmt.Println(err)
 	fmt.Println(res)
+	fmt.Println(len(mlp.weightGrads))
 }
