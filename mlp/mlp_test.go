@@ -17,6 +17,7 @@ func TestNewMLPClassifier(t *testing.T) {
 	rand.Seed(1)
 
 	mlp, err := NewMLPClassifier(4, []int{12, 3})
+	defer mlp.Close()
 
 	if err != nil {
 		fmt.Printf("Error with the creation of the classifer: %s", err)
@@ -28,7 +29,6 @@ func TestNewMLPClassifier(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	defer mlp.Close()
 
 	// Make a test tensor
 	test := tensor.New(tensor.WithBacking([]float64{1, 2, 3, 4}), tensor.WithShape(4, 1))

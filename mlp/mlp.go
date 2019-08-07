@@ -178,13 +178,15 @@ func (n *FeedForward) Activate(input tensor.Tensor) (int, error) {
 	// This function is just a pass forward, but we must bound a value
 	// to the y anyway, so we fill it with 0s
 	expectedOutputSize := n.expectedOutput.Shape()[0]
-	expectedOutput := make([]float64, expectedOutputSize)
+	tShape := tensor.WithShape(expectedOutputSize)
+	// expectedOutput := make([]float64, expectedOutputSize)
+	expectedOutput := tensor.New(tShape, tensor.WithBacking(make([]float64, expectedOutputSize)))
 	fmt.Println(expectedOutput)
 	fmt.Println(n.expectedOutput)
 	gor.Let(n.expectedOutput, expectedOutput)
 
 	// Check the value of the expected node
-	fmt.Printf("%T\n", n.expectedOutput)
+	fmt.Printf("Expected output: %T\n", n.expectedOutput)
 	value := n.expectedOutput.Value()
 	fmt.Println(value.Data())
 
